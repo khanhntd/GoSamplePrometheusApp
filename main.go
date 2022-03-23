@@ -1,6 +1,7 @@
 package main
 
 import (
+        "math/rand"
 	"net/http"
 	"time"
 
@@ -15,6 +16,10 @@ func recordMetrics() {
 			opsProcessed.Inc()
 			time.Sleep(2 * time.Second)
 		}
+                for {
+                        histogramProcessed.Observe(rand.Float64()*(100))
+                        time.Sleep(2 * time.Second)
+                }
 	}()
 }
 
@@ -23,6 +28,9 @@ var (
 		Name: "myapp_processed_ops_total",
 		Help: "The total number of processed events",
 	})
+        histogramProcessed = promauto.NewHistogram(prometheus.HistogramOpts{
+               Name: "myapp_histogram_processed_ops",
+        })
 )
 
 func main() {
